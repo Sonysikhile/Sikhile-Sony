@@ -7,12 +7,170 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <script>
   emailjs.init("K4yRSgmzxfL6RdzCQ");
 </script>
 <style>
-  :root {
+/* <style> */
+/* ══════════════════════════════════════════════════
+   CSS VARIABLES — DARK & LIGHT THEMES
+══════════════════════════════════════════════════ */
+:root,
+[data-theme="dark"] {
+  --bg:          #0A0A0A;
+  --bg2:         #111111;
+  --surface:     #161616;
+  --surface2:    #1E1C18;
+  --text:        #F7F3EC;
+  --text-dim:    rgba(247,243,236,.60);
+  --text-faint:  rgba(247,243,236,.30);
+  --gold:        #C9A84C;
+  --gold-light:  #E8C97A;
+  --gold-dim:    rgba(201,168,76,.55);
+  --border:      rgba(201,168,76,.18);
+  --border-h:    rgba(201,168,76,.50);
+  --topbar-bg:   rgba(10,10,10,.92);
+  --quote-bg:    #161616;
+  --quote-border:#1E1C18;
+  --card-bg:     #161616;
+  --card-hover:  #1E1C18;
+  --footer-bg:   #111111;
+  --toggle-icon: "☀️";
+  --pattern-color: rgba(201,168,76,.025);
+  --hero-glow:   rgba(201,168,76,.08);
+  --dua-bg:      rgba(201,168,76,.06);
+  --section-bg:  transparent;
+}
+
+[data-theme="light"] {
+  --bg:          #F5F0E6;
+  --bg2:         #EDE8DC;
+  --surface:     #FFFFFF;
+  --surface2:    #F8F4EC;
+  --text:        #1A1208;
+  --text-dim:    rgba(26,18,8,.60);
+  --text-faint:  rgba(26,18,8,.30);
+  --gold:        #8B6400;
+  --gold-light:  #B8860B;
+  --gold-dim:    rgba(139,100,0,.55);
+  --border:      rgba(139,100,0,.20);
+  --border-h:    rgba(139,100,0,.50);
+  --topbar-bg:   rgba(245,240,230,.95);
+  --quote-bg:    #EDE8DC;
+  --quote-border:#E0DAD0;
+  --card-bg:     #FFFFFF;
+  --card-hover:  #F8F4EC;
+  --footer-bg:   #1A1208;
+  --pattern-color: rgba(139,100,0,.04);
+  --hero-glow:   rgba(139,100,0,.06);
+  --dua-bg:      rgba(139,100,0,.06);
+  --section-bg:  transparent;
+}
+
+/* ══════════════════════════════════════════════════
+   RESET
+══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  transition: background .4s ease, color .4s ease;
+}
+
+/* Geometric trellis pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(60deg,  var(--pattern-color) 0, var(--pattern-color) 1px, transparent 0, transparent 50%),
+    repeating-linear-gradient(120deg, var(--pattern-color) 0, var(--pattern-color) 1px, transparent 0, transparent 50%);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+  transition: background-image .4s ease;
+}
+
+/* ══════════════════════════════════════════════════
+   THEME TOGGLE BUTTON (floating)
+══════════════════════════════════════════════════ */
+#theme-toggle {
+  position: fixed;
+  bottom: 32px;
+  right: 28px;
+  z-index: 999;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  background: var(--surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,.35);
+  transition: background .3s, border-color .3s, transform .2s;
+  outline: none;
+}
+#theme-toggle:hover {
+  background: var(--gold);
+  transform: scale(1.08) rotate(15deg);
+}
+#theme-toggle:hover .toggle-sun { color: #1A1208; }
+#theme-toggle:hover .toggle-moon { color: #1A1208; }
+
+.toggle-sun, .toggle-moon {
+  position: absolute;
+  font-size: 1.3rem;
+  transition: opacity .3s, transform .3s;
+  line-height: 1;
+}
+/* Dark mode: show sun (to switch to light) */
+[data-theme="dark"]  .toggle-sun  { opacity: 1; transform: scale(1); }
+[data-theme="dark"]  .toggle-moon { opacity: 0; transform: scale(.5); }
+/* Light mode: show moon (to switch to dark) */
+[data-theme="light"] .toggle-sun  { opacity: 0; transform: scale(.5); }
+[data-theme="light"] .toggle-moon { opacity: 1; transform: scale(1); }
+
+/* Tooltip */
+#theme-toggle::after {
+  content: attr(data-tip);
+  position: absolute;
+  right: 58px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: .72rem;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: .06em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+#theme-toggle:hover::after { opacity: 1; }
+
+
+
+
+
+
+
+
+
+
+
+  /* :root {
     --bg:#0a0a0f; --bg2:#0f0f17; --bg3:#13131e;
     --gold:#c9a84c; --gold-light:#e8c97a;
     --gold-dim:rgba(201,168,76,0.15); --gold-border:rgba(201,168,76,0.3);
@@ -20,7 +178,7 @@
     --navy:#1a2040; --white:#f5f2eb;
     --card:#11111a; --card-hover:#161622;
     --radius:4px; --transition:0.4s cubic-bezier(0.16,1,0.3,1);
-  }
+  } */
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:300;overflow-x:hidden;cursor:none;}
@@ -236,6 +394,14 @@
 </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════════════════
+     THEME TOGGLE BUTTON (floating, bottom-right)
+══════════════════════════════════════════════════ -->
+<button id="theme-toggle" aria-label="Toggle theme" data-tip="Switch theme" onclick="toggleTheme()">
+  <span class="toggle-sun" aria-hidden="true">☀️</span>
+  <span class="toggle-moon" aria-hidden="true">🌙</span>
+</button>
 
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
@@ -689,6 +855,50 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
   const id=a.getAttribute('href');
   if(id&&id!=='#'){e.preventDefault();const el=document.querySelector(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 }));
+
+
+/* ── Theme Toggle ── */
+(function () {
+  var html = document.documentElement;
+  var btn  = document.getElementById('theme-toggle');
+
+  /* Load saved preference, default dark */
+  var saved = localStorage.getItem('rq-theme') || 'dark';
+  html.setAttribute('data-theme', saved);
+  updateTip(saved);
+
+  function updateTip(theme) {
+    btn.setAttribute('data-tip', theme === 'dark' ? 'Switch to Light' : 'Switch to Dark');
+  }
+
+  window.toggleTheme = function () {
+    var current = html.getAttribute('data-theme');
+    var next    = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('rq-theme', next);
+    updateTip(next);
+  };
+})();
+
+/* ── Scroll Reveal ── */
+(function () {
+  var items = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry, i) {
+      if (entry.isIntersecting) {
+        setTimeout(function () {
+          entry.target.classList.add('visible');
+        }, i * 90);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  items.forEach(function (el) { io.observe(el); });
+})();
+</script>
+
+
+
 </script>
 </body>
 </html>
