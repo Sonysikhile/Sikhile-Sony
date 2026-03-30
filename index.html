@@ -6,6 +6,11 @@
 <title>Sikhile Sony — Frontend Developer</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+  emailjs.init("K4yRSgmzxfL6RdzCQ");
+</script>
 <style>
   :root {
     --bg:#0a0a0f; --bg2:#0f0f17; --bg3:#13131e;
@@ -572,18 +577,68 @@ const bo=new IntersectionObserver(entries=>entries.forEach(e=>{
 document.querySelectorAll('#skills').forEach(el=>bo.observe(el));
 
 // FORM
-function handleSubmit(e){
-  e.preventDefault();
-  const btn=e.target.querySelector('button[type="submit"]');
-  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending...';btn.disabled=true;
-  setTimeout(()=>{
-    btn.innerHTML='<i class="fas fa-check"></i> Sent!';
-    document.getElementById('formStatus').style.display='block';
-    e.target.reset();
-    setTimeout(()=>{btn.innerHTML='<i class="fas fa-paper-plane"></i> Send Message';btn.disabled=false;document.getElementById('formStatus').style.display='none';},4000);
-  },1500);
-}
+// function handleSubmit(e){
+//   e.preventDefault();
+//   const btn=e.target.querySelector('button[type="submit"]');
+//   btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending...';btn.disabled=true;
+//   setTimeout(()=>{
+//     btn.innerHTML='<i class="fas fa-check"></i> Sent!';
+//     document.getElementById('formStatus').style.display='block';
+//     e.target.reset();
+//     setTimeout(()=>{btn.innerHTML='<i class="fas fa-paper-plane"></i> Send Message';btn.disabled=false;document.getElementById('formStatus').style.display='none';},4000);
+//   },1500);
+// }
 
+
+
+// ═══════════════════════════════════════════════
+// EMAILJS SETUP — replace the 3 values below
+// ═══════════════════════════════════════════════
+// 1. SERVICE ID  → EmailJS dashboard → Email Services → copy Service ID
+// 2. TEMPLATE ID → EmailJS dashboard → Email Templates → copy Template ID  
+// 3. PUBLIC KEY  → EmailJS dashboard → Account → copy Public Key
+// ═══════════════════════════════════════════════
+emailjs.init('K4yRSgmzxfL6RdzCQ'); // ← paste your Public Key here
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const form    = e.target;
+  const btn     = form.querySelector('button[type="submit"]');
+  const status  = document.getElementById('formStatus');
+
+  const name    = form.querySelector('[name="name"]').value.trim();
+  const email   = form.querySelector('[name="email"]').value.trim();
+  const message = form.querySelector('[name="message"]').value.trim();
+
+  btn.innerHTML        = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  btn.disabled         = true;
+  status.style.display = 'none';
+
+  emailjs.send(
+    'service_1x64eux', // ← paste your Service ID here  (e.g. service_1x64eux)
+    'template_qfbpz6g', // ← paste your Template ID here (e.g. template_abc123)
+    { from_name: name, from_email: email, message: message, to_name: 'Sikhile Sony' }
+  )
+  .then(() => {
+    btn.innerHTML        = '<i class="fas fa-check"></i> Sent!';
+    status.style.color   = '#c9a84c';
+    status.textContent   = '✓ Message received! I will get back to you soon.';
+    status.style.display = 'block';
+    form.reset();
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+      btn.disabled  = false;
+    }, 3000);
+  })
+  .catch((err) => {
+    console.error('EmailJS error:', err);
+    btn.innerHTML        = '<i class="fas fa-paper-plane"></i> Send Message';
+    btn.disabled         = false;
+    status.style.color   = '#e05a5a';
+    status.textContent   = '✗ Failed to send. Please email: sikhilesony@gmail.com';
+    status.style.display = 'block';
+  });
+}
 // RESUME DOWNLOAD
 function downloadResume(e){
   e.preventDefault();
